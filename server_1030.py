@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 import random #암호화 구축 위해
 import hashlib	# MD5를 구하기 위해 import
+<<<<<<< HEAD
 import pyautogui
+=======
+import netifaces as ni #소켓 통신을 위해 필요했었음 이제 필요없
+>>>>>>> 729575492396c2120396789f92b00ae5452a2b75
 import bluetooth#블루투스 통신을 위해
 import re #패스프레이즈 변환을 위해
 import socket #소켓통신을 위해 이제 필요 없
@@ -11,8 +15,12 @@ from collections import OrderedDict #딕셔너리형 변수 사용 위해
 import sys #임폴트 경로떄문
 sys.path.insert(0, '/home/pi/smart_mirror/')
 from ui_object import t #ui에 메시지 표출을 하기 위해
+<<<<<<< HEAD
 from caldavclient.schedule_handler import certifications
 
+=======
+from caldavclient.caldavclient import CaldavClient #사용자 정보의 검증을 위하여 필요
+>>>>>>> 729575492396c2120396789f92b00ae5452a2b75
 
 def list_process(u_str): #암호화
 	seed = 'abcdefghijklmnopqrstuvwxyz123456789' #원문의 암호화시 필요한 데이터들
@@ -77,6 +85,10 @@ def string_processing(in_str):#스트링 형 변수를 리스트로 재구축
 def list_processed(u_s_list): # 복호화
 	if len(u_s_list)%4 == 3 or len(u_s_list) == 4: #원문이 짝수
 		compare_t = 0
+<<<<<<< HEAD
+=======
+		print("짝수")
+>>>>>>> 729575492396c2120396789f92b00ae5452a2b75
 	elif len(u_s_list)%4 == 1: #원문이 홀수
 		compare_t = 1
 	
@@ -146,9 +158,15 @@ def hashing_passphrase(passphras):
 def new_user(n_pwp, n_uid, n_upw):
 	global t
 	t.mirror.ment_lb.setText("신규 사용자 정보 입력") 
+<<<<<<< HEAD
 	time.sleep(1)
 	n_pwp=hashing_passphrase(n_pwp)# 패스프레이즈 해싱
 	if certifications(n_uid, n_upw) == 1: # 칼다브 클라이언트 이용해 사용자 id, pw의 검증
+=======
+	time.sleep(2)
+	n_pwp=hashing_passphrase(n_pwp)# 패스프레이즈 해싱
+	if CaldavClient("https://caldav.calendar.naver.com/principals/",(n_uid, n_upw)) != None: # 칼다브 클라이언트 이용해 사용자 id, pw의 검증
+>>>>>>> 729575492396c2120396789f92b00ae5452a2b75
 		n_upw = (''.join(list_process(n_upw)))#평문 암호화알고리즘에 적용해 스트링 형식으로 배치
 		if os.path.exists('/home/pi/smart_mirror/text_directory/user_info.json') :		 #처음 구동시 DB.TXT있는지 유무확인후 없으면 생성 필요
 			with open('/home/pi/smart_mirror/text_directory/user_info.json') as data_file:	#파일이 존재하면 값을 읽어옴
@@ -179,15 +197,28 @@ def new_user(n_pwp, n_uid, n_upw):
 def exist_user(e_pwp, e_del_pwp, e_uid, e_upw):
 	global t
 	t.mirror.ment_lb.setText("기존 사용자 정보 변경")
+<<<<<<< HEAD
 	time.sleep(1)
 	e_pwp=hashing_passphrase(e_pwp)
 	e_del_pwp=hashing_passphrase(e_del_pwp)
 
 	if certifications(e_uid, e_upw) == 1: # 칼다브 클라이언트 이용해 사용자 id, pw의 검증
+=======
+	time.sleep(2)
+	e_pwp=hashing_passphrase(e_pwp)
+	e_del_pwp=hashing_passphrase(e_del_pwp)
+
+	if CaldavClient("https://caldav.calendar.naver.com/principals/",(e_uid, e_upw)) != None: # 칼다브 클라이언트 이용해 사용자 id, pw의 검증
+		e_upw = list_process(e_upw)#평문 암호화알고리즘에 적용해 스트링 형식으로 배치
+>>>>>>> 729575492396c2120396789f92b00ae5452a2b75
 		if os.path.exists('/home/pi/smart_mirror/text_directory/user_info.json') :		 #처음 구동시 DB.TXT있는지 유무확인후 없으면 생성 필요
 			with open('/home/pi/smart_mirror/text_directory/user_info.json') as data_file:	#파일이 존재하면 값을 읽어옴
 				dict = json.load(data_file) #해당 .json 의 값을 dict에 읽어들임
 			t.mirror.ment_lb.setText("'.json' load")
+<<<<<<< HEAD
+=======
+			time.sleep(2)
+>>>>>>> 729575492396c2120396789f92b00ae5452a2b75
 			compare_Uinfo=dict.get(e_del_pwp) #해당 패스프레이즈를 키값으로하는 사용자 정보 load
 			if compare_Uinfo is None: #해당 패스프레이즈로 검색한 값에 대한 검증
 				return 2 #사용자가 입력한 패스프레이즈의 오류
@@ -195,10 +226,20 @@ def exist_user(e_pwp, e_del_pwp, e_uid, e_upw):
 				e_last_uid = compare_Uinfo[0]
 				e_last_upw = list_processed(string_processing(compare_Uinfo[1])) #로드한 정보 복호화하여 저장
 
+<<<<<<< HEAD
 			if(e_last_uid == e_uid)and(''.join(e_last_upw)==e_upw): #저장되어있던 패스프레이즈의 사용자 정보와 입력한 사용자 정보의 비교
 				if dict.get(e_del_pwp): #패스프레이즈를 이용해 dict에서 값 가져옴
 					del dict[e_del_pwp] #변경전 패스프레이즈 정보 삭제
 					dict[e_pwp] = [e_uid, (''.join(list_process(e_upw)))] #변경후 패스프레이즈 정보 등록
+=======
+			if(e_last_uid == e_uid)and(''.join(e_last_upw)==''.join(list_processed(e_upw))): #저장되어있던 패스프레이즈의 사용자 정보와 입력한 사용자 정보의 비교
+				if dict.get(e_del_pwp): #패스프레이즈를 이용해 dict에서 값 가져옴
+					t.mirror.ment_lb.setText("이전 기록 삭제")
+					del dict[e_del_pwp] #변경전 패스프레이즈 정보 삭제
+					t.mirror.ment_lb.setText("사용자 정보 수정")
+					time.sleep(2)
+					dict[e_pwp] = [e_uid, ''.join(e_upw)] #변경후 패스프레이즈 정보 등록
+>>>>>>> 729575492396c2120396789f92b00ae5452a2b75
 					with open('/home/pi/smart_mirror/text_directory/user_info.json','w',encoding='utf-8')as make_file: #.json파일 쓰기형식, utf-8 로 인코딩해 오픈
 						json.dump(dict, make_file, ensure_ascii=False, indent="\t") #json 파일에 dict등록
 					return 4 #사용자 정보 성공적으로 변경
@@ -225,7 +266,11 @@ def del_user(d_pwp, d_uid, d_upw):
 	
 	d_pwp=hashing_passphrase(d_pwp)
 	t.mirror.ment_lb.setText("사용자 정보 삭제")
+<<<<<<< HEAD
 	time.sleep(1)
+=======
+	time.sleep(2)
+>>>>>>> 729575492396c2120396789f92b00ae5452a2b75
 
 	if os.path.exists('/home/pi/smart_mirror/text_directory/user_info.json') :		 #처음 구동시 DB.TXT있는지 유무확인후 없으면 생성 필요
 		with open('/home/pi/smart_mirror/text_directory/user_info.json') as data_file:	#파일이 존재하면 값을 읽어옴
@@ -256,6 +301,7 @@ def del_user(d_pwp, d_uid, d_upw):
 		t.mirror.ment_lb.setText("저장된 사용자 정보가 없습니다.")
 		return 8 #등록된 정보가 없을때
 
+<<<<<<< HEAD
 def add_address(u_address):#사용자 주소입력 위한 함수
 	global t
 	t.mirror.ment_lb.setText("사용자 주소 입력") 
@@ -270,14 +316,19 @@ def add_address(u_address):#사용자 주소입력 위한 함수
 			make_file.write(u_address)	#dict의 값을 .json에 씀
 		t.mirror.ment_lb.setText("사용자 주소 등록 성공")
 		return 9 #사용자 정보의 성공적인 등록
+=======
+>>>>>>> 729575492396c2120396789f92b00ae5452a2b75
 
 def data_Processing(r_data):
 	global t
 	for n in range(len(r_data)): #어플리케이션 으로부터 전송된 리스트를 각각의 스트링에 저장하기위함
 		if n%5==0:
 			d_info=r_data[n] #정보등록, 정보변경, 정보삭제인지 확인할 값
+<<<<<<< HEAD
 			if d_info == '4':#주소 등록시 사용하기 위한 설정
 				return d_info, r_data[1], '', '', ''
+=======
+>>>>>>> 729575492396c2120396789f92b00ae5452a2b75
 		if n%5==1:
 			d_pwp=r_data[n] #사용자가 현 시점부터 사용할 패스프레이즈
 		if n%5==2:
@@ -286,6 +337,10 @@ def data_Processing(r_data):
 			d_uid=r_data[n] #사용자가 사용하는 id
 		if n%5==4:
 			d_upw=r_data[n] #사용자가 사용하는 pw
+<<<<<<< HEAD
+=======
+	t.mirror.ment_lb.setText("data_Processing Complite")
+>>>>>>> 729575492396c2120396789f92b00ae5452a2b75
 	return d_info, d_pwp, d_del_pwp, d_uid, d_upw #스트링 형식으로 바꿔 반환
 
 def error_messge(error_num, er_pwp, er_uid, er_upw): #알맞는 에러메시지와 complite메시지를 반환하기위한 함수
@@ -316,9 +371,12 @@ def error_messge(error_num, er_pwp, er_uid, er_upw): #알맞는 에러메시지�
 	elif error_num == 8: #에러
 		e_message="\n등록된 정보가 없습니다.\n"
 		sand_client=e_message.encode()
+<<<<<<< HEAD
 	elif error_num == 9:#성공
 		e_message="\n주소등록 성공\n\n"
 		sand_client=e_message.encode()+b'**'+er_pwp.encode()+b'**\n'
+=======
+>>>>>>> 729575492396c2120396789f92b00ae5452a2b75
 	else: #예상하지 못한 에러
 		e_message="치명적인 오류 발생\n어플리케이션의 재부팅이\n필요합니다.\n"
 		sand_client=e_message.encode()
@@ -326,6 +384,7 @@ def error_messge(error_num, er_pwp, er_uid, er_upw): #알맞는 에러메시지�
 	return sand_client
 
 def server_start():
+<<<<<<< HEAD
 
 	global t # ui에 메시지를 출력하기 위해
 	try:
@@ -394,3 +453,45 @@ def server_start():
 	except:
 		t.mirror.ment_lb.setText("오류가 발생하였습니다 다시 시도해주세요")
 		time.sleep(2)
+=======
+	global t # ui에 메시지를 출력하기 위해
+	verify=0
+	checker = True
+	#입력받는 아이디는 @naver.com 없이 받아야함
+	while checker:
+		server_scoket=bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+		port = 1
+		server_scoket.bind(("",port))
+		server_scoket.listen(1)
+		client_socket,address = server_scoket.accept()
+		t.mirror.ment_lb.setText("☻연결되었습니다☻")
+		data = client_socket.recv(2048) # 소켓에서 (bufsize) 만큼 데이터를 수신
+		data = data.decode("utf8").strip()
+		if not data: break #수신한 데이터가 없을시 정지
+		# 수신한 데이터저장
+		res = do_some_stuffs_with_input(data) #함수를 이용해 전달받은 사용자 정보를 리스트에 배치
+		#클라이언트에게 답을 보냄
+		einfo, pwp, del_pwp, uid, upw = data_Processing(res) #리스트에 배치된 사용자 정보 각각의 스트링 변수에 저장
+		t.mirror.ment_lb.setText("데이터를 정상적으로 수신")
+		if einfo == '0': #사용자 정보 등록
+			verify  = new_user(pwp, uid, upw)
+		elif einfo == '1': #사용자 정보 변경
+			verify = exist_user(pwp, del_pwp, uid, upw)
+		elif einfo == '2': #사용자 정보 삭제
+			verify = del_user(pwp, uid, upw)
+		else: #지정하지 않은 값 전달시(예상하지 못한 에러 발생)
+			client_socket.sendall(error_messge(13, pwp, uid, upw).encode())
+			client_socket.close()
+			break
+
+		client_socket.sendall(error_messge(verify, pwp, uid, upw))
+
+		time.sleep(2)
+
+		if verify == 0 or verify == 4 or verify == 6: #성공적인 작동시 while문 정지후 연결 닫음
+			checker = False
+			t.mirror.ment_lb.setText("connect closed")
+		client_socket.close()
+		server_scoket.close()
+		time.sleep(1)
+>>>>>>> 729575492396c2120396789f92b00ae5452a2b75
